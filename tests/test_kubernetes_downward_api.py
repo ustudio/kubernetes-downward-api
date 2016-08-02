@@ -34,3 +34,25 @@ key2="value2"
                 'key2': 'value2'
             }
         }, parse(['/complex/file']))
+
+    def test_parse_parses_all_files_in_directory(self):
+        self.mockfs.add_entries({
+            '/dir/file': 'value',
+            '/dir/other': 'content'
+        })
+
+        self.assertEqual({
+            'file': 'value',
+            'other': 'content'
+        }, parse(['/dir']))
+
+    def test_parse_parses_all_paths_given(self):
+        self.mockfs.add_entries({
+            '/some/file': 'value',
+            '/dir/other': 'content'
+        })
+
+        self.assertEqual({
+            'file': 'value',
+            'other': 'content'
+        }, parse(['/some/file', '/dir']))
