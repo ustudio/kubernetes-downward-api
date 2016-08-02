@@ -49,10 +49,16 @@ key2="value2"
     def test_parse_parses_all_paths_given(self):
         self.mockfs.add_entries({
             '/some/file': 'value',
-            '/dir/other': 'content'
+            '/other/complex': '''\
+key1="value1"
+key2="value2"
+'''
         })
 
         self.assertEqual({
             'file': 'value',
-            'other': 'content'
-        }, parse(['/some/file', '/dir']))
+            'complex': {
+                'key1': 'value1',
+                'key2': 'value2'
+            }
+        }, parse(['/some/file', '/other/complex']))
