@@ -6,16 +6,23 @@ def _parse_file(path):
     name = os.path.basename(path)
 
     with open(path) as f:
-        first = f.readline()
-
-        if '="' not in first:
-            return {name: first}
-
         data = {}
 
-        for line in [first] + f.readlines():
+        for line in f:
+            line = line.strip()
+
+            if line is '':
+                continue
+
+            if '="' not in line:
+                if len(data) == 0:
+                    return {name: line}
+                raise ValueError(
+                    "Line in complex file lacks key/value pair: {0}".format(
+                        line))
+
             key, value = line.split('=')
-            data[key] = value.strip('"\n')
+            data[key] = value.strip('"')
 
         return {name: data}
 
