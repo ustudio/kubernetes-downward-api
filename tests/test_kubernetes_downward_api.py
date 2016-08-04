@@ -46,6 +46,30 @@ key2="value2"
             'other': 'content'
         }, parse(['/dir']))
 
+    def test_parse_skips_hidden_files_in_directory(self):
+        self.mockfs.add_entries({
+            '/dir/file': 'value',
+            '/dir/.other': 'incorrect',
+            '/dir/other': 'content'
+        })
+
+        self.assertEqual({
+            'file': 'value',
+            'other': 'content'
+        }, parse(['/dir']))
+
+    def test_parse_skips_directories_nested_in_directory(self):
+        self.mockfs.add_entries({
+            '/dir/file': 'value',
+            '/dir/nested/file': 'incorrect',
+            '/dir/other': 'content'
+        })
+
+        self.assertEqual({
+            'file': 'value',
+            'other': 'content'
+        }, parse(['/dir']))
+
     def test_parse_parses_all_paths_given(self):
         self.mockfs.add_entries({
             '/some/file': 'value',
