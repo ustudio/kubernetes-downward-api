@@ -24,7 +24,10 @@ def _parse_dir(path):
     metadata = {}
 
     for filename in os.listdir(path):
-        metadata.update(_parse_file(os.path.join(path, filename)))
+        abs_path = os.path.join(path, filename)
+
+        if not filename.startswith('.') and os.path.isfile(abs_path):
+            metadata.update(_parse_file(abs_path))
 
     return metadata
 
