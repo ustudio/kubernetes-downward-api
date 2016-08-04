@@ -26,7 +26,7 @@ class TestKubernetesDownwardAPI(unittest.TestCase):
 key1="value1"
 key2="value2"
 '''
-            })
+        })
 
         self.assertEqual({
             'file': {
@@ -34,6 +34,26 @@ key2="value2"
                 'key2': 'value2'
             }
         }, parse(['/complex/file']))
+
+    def test_parse_ignores_blank_lines(self):
+        self.mockfs.add_entries({
+            '/complex/file': '\n' + '    \n' + 'key1="value1"\n' + ' \n' + 'key2="value2"\n'
+        })
+
+        self.assertEqual({
+            'file': {
+                'key1': 'value1',
+                'key2': 'value2'
+            }
+        }, parse(['/complex/file']))
+
+    def test_parse_raises_if_complex_file_has_line_without_key_value_pair(self):
+        self.mockfs.add_entries({
+            '/complex/file': 'key1="value1"\n' + 'something\n'
+        })
+
+        with self.assertRaises(ValueError):
+            parse(['/complex/file'])
 
     def test_parse_parses_all_files_in_directory(self):
         self.mockfs.add_entries({
